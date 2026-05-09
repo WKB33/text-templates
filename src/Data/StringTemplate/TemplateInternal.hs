@@ -17,19 +17,26 @@ be defined to replace the holes with strings; see `plug`.
 {-# LANGUAGE ScopedTypeVariables          #-}
 {-# LANGUAGE RankNTypes                   #-}
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE BangPatterns #-}
 module Data.StringTemplate.TemplateInternal where
 
 import GHC.TypeNats            (type (+)
                                ,Natural
-                               ,Nat)
-import Data.Type.Natural       (S)
+                               ,Nat, sameNat, SomeNat (SomeNat), KnownNat (natSing))
+import Data.Type.Natural       (S, type (>))
 import Data.Text               qualified as DT
+import GHC.Base (WithDict(..), coerce)
+import Data.Constraint.Nat (plusAssociates)
+import Data.Constraint (HasDict(evidence), (:-), Dict (..), (\\))
+import Data.Type.Equality ((:~:) (..))
+import Data.Type.Coercion (coerceWith)
 
 -- | A internal template with `n` holes. 
 data ITemplate (n :: Nat) where
   Chunk   :: DT.Text      -> ITemplate 0                         -- ^ Chunk of a string.
-  Hole    :: Natural      -> ITemplate (S n)                     -- ^ A hole. 
-  Compose :: ITemplate n1 -> ITemplate n2 -> ITemplate (n1 + n2) -- ^ Composition of templates.
+  Hole    :: Natural      -> ITemplate 1                         -- ^ A hole. 
+  Compose :: ((n1 + n2) > 0) => ITemplate n1 -> ITemplate n2 -> ITemplate (n1 + n2) -- ^ Composition of templates.
 
 instance Show (ITemplate n) where
     show :: ITemplate n -> String    
@@ -46,11 +53,39 @@ instance Show Template where
     show :: Template -> String
     show (Template t) = show t
 
+p1 :: forall n5 n6 n7.Dict (((n5 + n6) + n7) ~ (n5 + (n6 + n7))) -> forall n4.Dict ((n4 + ((n5 + n6) + n7)) ~ (n4 + (n5 + (n6 + n7))))
+p1 Dict = Dict
+
+ev :: forall n4 n5 n6 n7.Dict (((n4 + (n5 + n6)) + n7) ~ ((n4 + n5) + (n6 + n7)))
+ev =  Dict \\ (plusAssociates @n4 @n5 @(n6 + n7)) \\ (p1 @n5 @n6 @n7 (plusAssociates @n5 @n6 @n7) @n4) \\ plusAssociates @n4 @(n5 + n6) @n7 
+
+p3 :: forall n1 n4 n5 n2 n6 n7.(n1 ~ (n4 + n5), n2 ~ (n6 + n7)) => Dict (((n4 + (n5 + n6)) + n7) ~ (n1 + n2))
+p3 = Dict \\ ev @n4 @n5 @n6 @n7
+
+p :: forall n1 n4 n5 n2 n6 n7.(n1 ~ (n4 + n5), n2 ~ (n6 + n7))
+  => ITemplate n4
+  -> ITemplate n5
+  -> ITemplate n6
+  -> ITemplate n7
+  -> ITemplate (n1+n2)
+p t1 t2 t3 t4 = (t1 >+> (t2 >+> t3) >+> t4) \\ p3 @n1 @n4 @n5 @n2 @n6 @n7
+
+(>+>) :: ITemplate n1 -> ITemplate n2 -> ITemplate (n1 + n2)
+t1@(Hole _)     >+> t2@(Hole _)     = Compose t1 t2
+t1@(Hole _)     >+> t2@(Chunk _)    = Compose t1 t2
+t1@(Chunk _)    >+> t2@(Hole _)     = Compose t1 t2
+(Chunk chk1)    >+> (Chunk chk2)    = Chunk $ chk1 <> chk2
+(Compose t1 t2) >+> t3@(Chunk _)    = undefined
+t1@(Chunk _)    >+> (Compose t2 t3) = (>+> t3) $! (t1 >+> t2)
+t1@(Hole _)     >+> (Compose t2 t3) = undefined --Compose t1 $ t2 >+> t3
+(Compose t1 t2) >+> t3@(Hole _)     = undefined --Compose (t1 >+> t2) t3
+(Compose t1 t2) >+> (Compose t3 t4) = p t1 t2 t3 t4
+
 -- | Composition of templates.
 (+>) :: Template
      -> Template
      -> Template
-(Template t1) +> (Template t2) = Template $ Compose t1 t2
+(Template t1) +> (Template t2) = Template $ t1 >+> t2
 
 -- | A hole.
 hole :: Natural
@@ -84,7 +119,6 @@ plug (Template t) f =
     case _plug f t of
         Nothing -> Nothing
         Just (Chunk c) -> Just c
-        Just _ -> error "impossible branch"
 
 -- | Main logic for plug.
 _plug 
