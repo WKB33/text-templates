@@ -61,6 +61,10 @@ instance Show Template where
 (Compose chk1 _ r1) >==> (Compose chk2 _ r2) = (chk1 == chk2 && r1 >==> r2) 
 _                   >==> _                   = False
 
+instance Eq Template where
+    (==) :: Template -> Template -> Bool
+    (==) = (==>)
+
 -- | Equality of templates. Two templates are considered equivalent if and only
 -- if they differ by hole labels only.
 (==>) :: Template
@@ -137,8 +141,8 @@ toRegex (Template t) = _toRegex t
 -- | Match a string against a template. Outputs @True@ when the entire string
 -- matches the template where all its holes are plugged with the regular
 -- expression @.*@.
-match :: Template -- ^ Template to be match on
-      -> DT.Text  -- ^ String to match
+match :: Template -- ^ Template to be matched on
+      -> DT.Text  -- ^ String to match against
       -> Bool
 match t s = s =~ regex
     where

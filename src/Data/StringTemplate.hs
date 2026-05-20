@@ -23,10 +23,13 @@ module Data.StringTemplate (-- * Templates
                            ,showAST
                            -- ** Plugging Holes in Templates
                            ,plug
+                           -- ** Equality and Matching
+                           ,(==>)
+                           ,match
                            -- * Quasi-Quoter for Templates
                            ,template
-                           ,stringTemplate2QExp) where
+                           ,stringTemplate2QExp
+                           ) where
 
 import Data.StringTemplate.TemplateInternal
 import Data.StringTemplate.QQInternal
-

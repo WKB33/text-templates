@@ -91,24 +91,27 @@ stringTemplate2QExp = flip (.) (parseTemplate . DT.pack) $ \case {
         ;Left err -> fail $ DT.unpack err
     } 
 
--- | Converts an `ITemplate` constructor name into its corresponding combinator.
-constName2Combinator :: ITemplate n -> Name
-constName2Combinator = TH.mkName . \case {
-         Chunk   _     -> "chunk"
-        ;Compose _ _ _ -> "+>"
-    }
-
 -- | Convert an `ITemplate` into a Template Haskell expression.
 iTemplate2QExp :: ITemplate n -> Q Exp
-iTemplate2QExp t@(Chunk chk) = do
-    let constName = constName2Combinator t 
-    appCombinator1 constName $ mkTextLit chk  
-iTemplate2QExp t@(Compose p h r) = do
-    let constName = constName2Combinator t 
-    let pExp      = mkTextLit p
-    let hExp      = mkNaturalLit h
+iTemplate2QExp (Chunk chk) = do
+    let chunk = TH.mkName "chunk"
+    appCombinator1 chunk $ mkTextLit chk  
+iTemplate2QExp (Compose p h r) = do
+    -- Translate a Compose into the composition combinator:
+    -- Compose p h r = (chunk p) +> (hole h) +> r
+    let pExp      = iTemplate2QExp (Chunk p)
+    let hExp      = appCombinator1 (TH.mkName "hole") (mkNaturalLit h)
     let rExp      = iTemplate2QExp r
-    appCombinator3 constName pExp hExp rExp
+    let compose   = appInfixCombinator (TH.mkName "+>")
+    (pExp `compose` hExp) `compose` rExp
+
+-- | Apply an infix combinator to a two arguments.
+appInfixCombinator :: TH.Quote m 
+                   => Name  -- ^ Name of the combinator
+                   -> m Exp -- ^ First argument expression
+                   -> m Exp -- ^ Second argument expression
+                   -> m Exp 
+appInfixCombinator constName e1 e2 = TH.infixE (Just e1) (TH.varE constName) (Just e2)
 
 -- | Convert a `Template` into a Template Haskell expression.
 template2QExp :: Template -> Q Exp
