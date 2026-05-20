@@ -31,6 +31,7 @@ import Data.Constraint         (Dict (..)
                                ,(\\))
 import Data.Constraint.Nat     (plusAssociates
                                ,plusCommutes)
+import Text.Regex.TDFA         ((=~))
 
 -- | A internal template with `n` holes. 
 data ITemplate (n :: Nat) where
@@ -132,3 +133,13 @@ toRegex (Template t) = _toRegex t
         _toRegex :: ITemplate n -> DT.Text
         _toRegex (Chunk chk)       = chk
         _toRegex (Compose chk _ r) = chk <> ".*" <> _toRegex r
+
+-- | Match a string against a template. Outputs @True@ when the entire string
+-- matches the template where all its holes are plugged with the regular
+-- expression @.*@.
+match :: Template -- ^ Template to be match on
+      -> DT.Text  -- ^ String to match
+      -> Bool
+match t s = s =~ regex
+    where
+        regex = toRegex t

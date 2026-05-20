@@ -44,7 +44,7 @@ library
       ,type-natural
       ,template-haskell    
       ,constraints
-      ,regex-tdfa
+      ,regex-tdfa >=1.3.2.5 && <1.4
   default-language: Haskell2010
 
 test-suite string-templates-test

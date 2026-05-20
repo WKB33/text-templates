@@ -11,10 +11,16 @@ packages:
       size: 1537
   original:
     hackage: type-natural-1.3.0.2
+- completed:
+    hackage: regex-tdfa-1.3.2.5@sha256:b2724328a8b02d6520186aa24d6a0bc926e86206361a76535b22d31ef84b3451,6468
+    pantry-tree:
+      sha256: 9bf336389652f2b2740679279b3a3682fdb61dc337bef658db501d6783c5c382
+      size: 2675
+  original:
+    hackage: regex-tdfa-1.3.2.5
 snapshots:
 - completed:
-    sha256: 91dfbdf885fb0110f0e63cdba42e13ff375dc7efc2f69f02d238b31ca3c1064f
-    size: 728778
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/24/39.yaml
-  original:
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/24/39.yaml
+    sha256: a6882445afe04fd38791656e3667b491d92b9c27bcf18cda7e01c73016e828ee
+    size: 728959
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/24/36.yaml
+  original: lts-24.36
