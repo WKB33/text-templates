@@ -30,8 +30,17 @@ library
       Paths_string_templates
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
-  default-extensions: 
+  ghc-options: -Wall 
+               -Wcompat 
+               -Widentities 
+               -Wincomplete-record-updates 
+               -Wincomplete-uni-patterns 
+               -Wmissing-export-lists 
+               -Wmissing-home-modules 
+               -Wpartial-fields 
+               -Wredundant-constraints
+               -Wno-name-shadowing 
+  default-extensions:     
     ImportQualifiedPost
     OverloadedStrings
     InstanceSigs

@@ -94,24 +94,21 @@ stringTemplate2QExp = flip (.) (parseTemplate . DT.pack) $ \case {
 -- | Converts an `ITemplate` constructor name into its corresponding combinator.
 constName2Combinator :: ITemplate n -> Name
 constName2Combinator = TH.mkName . \case {
-         Chunk   _   -> "chunk"
-        ;Hole    _   -> "hole"
-        ;Compose _ _ -> "+>"
+         Chunk   _     -> "chunk"
+        ;Compose _ _ _ -> "+>"
     }
 
 -- | Convert an `ITemplate` into a Template Haskell expression.
 iTemplate2QExp :: ITemplate n -> Q Exp
 iTemplate2QExp t@(Chunk chk) = do
     let constName = constName2Combinator t 
-    appCombinator1 constName $ mkTextLit chk
-iTemplate2QExp t@(Hole h) = do
+    appCombinator1 constName $ mkTextLit chk  
+iTemplate2QExp t@(Compose p h r) = do
     let constName = constName2Combinator t 
-    appCombinator1 constName $ mkNaturalLit h    
-iTemplate2QExp t@(Compose t1 t2) = do
-    let constName = constName2Combinator t 
-    let e1        = iTemplate2QExp t1
-    let e2        = iTemplate2QExp t2    
-    appInfixCombinator constName e1 e2
+    let pExp      = mkTextLit p
+    let hExp      = mkNaturalLit h
+    let rExp      = iTemplate2QExp r
+    appCombinator3 constName pExp hExp rExp
 
 -- | Convert a `Template` into a Template Haskell expression.
 template2QExp :: Template -> Q Exp
@@ -126,13 +123,14 @@ appCombinator1 :: TH.Quote m
                -> m Exp 
 appCombinator1 constName = TH.appE (TH.varE constName) 
 
--- | Apply an infix combinator to a two arguments.
-appInfixCombinator :: TH.Quote m 
-                   => Name  -- ^ Name of the combinator
-                   -> m Exp -- ^ First argument expression
-                   -> m Exp -- ^ Second argument expression
-                   -> m Exp 
-appInfixCombinator constName e1 e2 = TH.infixE (Just e1) (TH.varE constName) (Just e2)
+-- | Apply a combinator to a single argument.
+appCombinator3 :: TH.Quote m 
+               => Name  -- ^ Name of the combinator
+               -> m Exp -- ^ First argument expression
+               -> m Exp -- ^ Second argument expression
+               -> m Exp -- ^ Third argument expression
+               -> m Exp 
+appCombinator3 constName a1 a2 a3 = (TH.varE constName) `TH.appE`  a1 `TH.appE` a2 `TH.appE` a3
 
 -- | Convert a `Text` into a Template Haskell literal.
 mkTextLit :: TH.Quote m 

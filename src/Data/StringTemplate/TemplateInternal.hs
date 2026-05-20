@@ -17,9 +17,9 @@ be defined to replace the holes with strings; see `plug`.
 {-# LANGUAGE ScopedTypeVariables          #-}
 {-# LANGUAGE RankNTypes                   #-}
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
-{-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE BangPatterns #-}
-{-# LANGUAGE TypeAbstractions #-}
+{-# LANGUAGE TypeApplications             #-}
+{-# LANGUAGE BangPatterns                 #-}
+{-# LANGUAGE TypeAbstractions             #-}
 module Data.StringTemplate.TemplateInternal where
 
 import GHC.TypeNats            (type (+)
