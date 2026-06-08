@@ -55,6 +55,7 @@ library
       ,constraints
       ,regex-tdfa >=1.3.2.5 && <1.4
       ,mtl
+      ,extra
       ,megaparsec
   default-language: Haskell2010
 

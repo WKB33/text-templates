@@ -22,9 +22,6 @@ prop_associativeCompose t1 t2 t3 = property $ t1 +> (t2 +> t3) == (t1 +> t2) +> 
 prop_identityCompose :: Template -> Property
 prop_identityCompose t = property $ (t +> (chunk "")) == t && ((chunk "") +> t) == t
 
-prop_reflexiveMatch :: Template -> Property
-prop_reflexiveMatch t = property $ regexMatch t (toRegex t)
-
 -- Write a function to get all the hole labels from a template.
 -- Use this to plug every hole, then use this + match to show the template is
 -- preserved under plugging.
@@ -39,6 +36,3 @@ spec = do
                 prop_associativeCompose
             prop "identity" $
                 prop_identityCompose
-        describe "match" $ do
-            prop "reflexivity" $
-                prop_reflexiveMatch

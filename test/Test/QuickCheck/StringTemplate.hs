@@ -28,11 +28,11 @@ genHole = hole <$> arbitrary
 
 genTemplateNat :: Natural -> Gen Template
 genTemplateNat 0 = genChunk
-genTemplateNat n = do (Template t hls) <- genTemplateNat $ n - 1
+genTemplateNat n = do (Template t (hls,nhls,fhls,nfhls)) <- genTemplateNat $ n - 1
                       h <- arbitrary :: Gen Natural
                       c <- arbitrary :: Gen DT.Text
-                      let t' = Compose c h t
-                      pure $ Template t' (h : hls)
+                      let t' = Compose c (h,Nothing) t
+                      pure $ Template t' (h : hls,nhls+1,fhls,nfhls)
 
 genTemplate :: Gen Template
 genTemplate = arbitrary >>= genTemplateNat

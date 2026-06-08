@@ -6,41 +6,40 @@ import Test.Hspec
 import Data.StringTemplate
 import Data.StringTemplate.TemplateInternal
 
-
 testJSONChunk1 :: (Template,Template)
 testJSONChunk1 = ([template|this is a chunk|],chunk "this is a chunk")
 
 testJSONChunk2 :: (Template,Template)
-testJSONChunk2 = ([template| |],Template (Chunk " ") [])
+testJSONChunk2 = ([template| |],Template (Chunk " ") ([],0,[],0))
 
 testJSONChunk3 :: (Template,Template)
-testJSONChunk3 = ([template|😩|],Template (Chunk "😩") [])
+testJSONChunk3 = ([template|😩|],Template (Chunk "😩") ([],0,[],0))
 
 testHole1 :: (Template,Template)
-testHole1 = ([template|${1}${2}${3}|],Template (Compose "" 1 (Compose "" 2 (Compose "" 3 (Chunk "")))) [1,2,3])
+testHole1 = ([template|$1{}$2{}$3{}|],Template (Compose "" (1, Nothing) (Compose "" (2, Nothing) (Compose "" (3, Nothing) (Chunk "")))) ([1,2,3],3,[],0))
 
 testHole2 :: (Template,Template)
-testHole2 = ([template|${1}${2}-${3}|],Template (Compose "" 1 (Compose "" 2 (Compose "-" 3 (Chunk "")))) [1,2,3])
+testHole2 = ([template|$1{}$2{}-$3{}|],Template (Compose "" (1, Nothing) (Compose "" (2, Nothing) (Compose "-" (3, Nothing) (Chunk "")))) ([1,2,3],3,[],0))
 
 testHole3 :: (Template,Template)
-testHole3 = ([template|this ${1} and ${2} is ${1}|],Template (Compose "this " 1 (Compose " and " 2 (Compose " is " 1 (Chunk "")))) [1,2])
+testHole3 = ([template|this $1{} and $2{} is $1{}|],Template (Compose "this " (1, Nothing) (Compose " and " (2, Nothing) (Compose " is " (1, Nothing) (Chunk "")))) ([1,2],2,[],0))
 
 testHole4 :: (Template,Template)
-testHole4 = ([template|Hi ${1}!|], Template (Compose "Hi " 1 (Chunk "!")) [1])
+testHole4 = ([template|Hi $1{}!|], Template (Compose "Hi " (1, Nothing) (Chunk "!")) ([1],1,[],0))
 
 testHole5 :: (Template,Template)
-testHole5 = ([template|Hi ❤️, ${1} ‼|], Template (Compose "Hi ❤️, " 1 (Chunk " ‼")) [1])
+testHole5 = ([template|Hi ❤️, $1{} ‼|], Template (Compose "Hi ❤️, " (1, Nothing) (Chunk " ‼")) ([1],1,[],0))
 
 testJSONHole1 :: (Template,Template)
 testJSONHole1 = ([template|
 {
-    "forename": "${1}", 
-    "surname": "${2}"
+    "forename": "$1{}", 
+    "surname": "$2{}"
 }
-|],Template (Compose "\n{\n    \"forename\": \"" 1 (Compose "\", \n    \"surname\": \"" 2 (Chunk "\"\n}\n"))) [1,2])
+|],Template (Compose "\n{\n    \"forename\": \"" ((1, Nothing)) (Compose "\", \n    \"surname\": \"" ((2, Nothing)) (Chunk "\"\n}\n"))) ([1,2],2,[],0))
 
 testJSONHole2 :: (Template,Template)
-testJSONHole2 = ([template|{"forename":"${1}","surname":"${2}"}|],Template (Compose "{\"forename\":\"" 1 (Compose "\",\"surname\":\"" 2 (Chunk "\"}"))) [1,2])
+testJSONHole2 = ([template|{"forename":"$1{}","surname":"$2{}"}|],Template (Compose "{\"forename\":\"" ((1, Nothing)) (Compose "\",\"surname\":\"" ((2, Nothing)) (Chunk "\"}"))) ([1,2],2,[],0))
 
 -- Next tests:
 -- 1. Plugging templates

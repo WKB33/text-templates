@@ -6,24 +6,41 @@ Copyright   : (c) Harley Eades, 2026
 Maintainer  : harley.eades@wkb3.com
 
 Framework for creating string templates. These are strings with holes that can
-be plugged. No parsing of the actual string is done, but the string is broken up
-into `chunk`'s in between the `hole`'s. Then a plug function can be defined to
-replace the holes with strings; see `plug`. 
+be filled and plugged. No parsing of the actual string is done, but the string
+is broken up into `chunk`'s in between the `hole`'s. Then a fill or plug
+function can be defined to replace the holes with text; see `fillHole` and
+`plugHole`. 
 
 The recommended way to programmatically generate templates is to use the
 quasi-quoter which makes writing templates easier. If you don't want to depend
-on Template Haskell, then you can also use the template combinators.
+on Template Haskell, then we strongly recommend to use the template combinators,
+because they keep track of internal state to make certain operations on
+templates efficient.
 -}
 module Data.StringTemplate (-- * Templates 
                             Template
                             -- ** Template Combinators
                            ,hole
+                           ,filled
                            ,chunk
                            ,(+>)
                            ,showAST
+                           -- ** Template Properties
+                           ,unfilledHoles
+                           ,filledHoles
+                           ,numberOfUnfilledHoles
+                           ,numberOfFilledHoles
+                           -- ** Filling Hole in Templates
+                           ,fillHole                           
                            -- ** Plugging Holes in Templates
+                           ,plugHole
+                           ,plugAll
                            -- ** Equality and Matching
                            ,(==>)
+                           ,match
+                           -- ** Converting from Templates
+                           ,chunkToText
+                           ,filledToText
                            -- * Quasi-Quoter for Templates
                            ,template
                            ,stringTemplate2QExp
