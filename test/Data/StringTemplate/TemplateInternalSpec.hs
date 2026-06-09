@@ -7,26 +7,29 @@ Maintainer  : harley.eades@gmail.com
 
 Various properties of the internals of the string templates API.
 -}
+{-# OPTIONS_GHC -Wno-unused-imports #-}
 module  Data.StringTemplate.TemplateInternalSpec (spec) where
 
 import Test.Hspec            (describe, Spec )
-import Test.QuickCheck       (Property, Testable (property), verboseCheck)
+import Test.QuickCheck       (Property, Testable (property), verboseCheck, Arbitrary)
 import Test.Hspec.QuickCheck (prop)
+import Data.Text             qualified as DT
 
 import Data.StringTemplate.TemplateInternal
-import Test.QuickCheck.StringTemplate ()
+import Test.QuickCheck.StringTemplate
 
 prop_associativeCompose :: Template -> Template -> Template -> Property
 prop_associativeCompose t1 t2 t3 = property $ t1 +> (t2 +> t3) == (t1 +> t2) +> t3
 
 prop_identityCompose :: Template -> Property
-prop_identityCompose t = property $ (t +> (chunk "")) == t && ((chunk "") +> t) == t
+prop_identityCompose t = property $ (t +> empty) == t && (empty +> t) == t
 
--- Write a function to get all the hole labels from a template.
--- Use this to plug every hole, then use this + match to show the template is
--- preserved under plugging.
+prop_matchReflexivity :: FilledTemplate -> Property
+prop_matchReflexivity (FilledTemplate t) = property $ match t tx == Matched
+    where
+        tx = maybe DT.Empty id $ filledToText t
 
--- Prop: match t (plug t) == True
+-- Properties on HoleProps
 
 spec :: Spec 
 spec = do
@@ -36,3 +39,6 @@ spec = do
                 prop_associativeCompose
             prop "identity" $
                 prop_identityCompose
+        describe "match" $ do
+            prop "template preservation" 
+                prop_matchReflexivity

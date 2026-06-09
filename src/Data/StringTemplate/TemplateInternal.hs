@@ -49,9 +49,15 @@ data Template where
              -> ([Natural],Natural,[Natural],Natural) -- ^ Unfilled hole indices, number of unfilled holes, filled hole indices, and number of filled holes
              -> Template
 
+newtype FilledTemplate = FilledTemplate Template
+
 instance Show Template where
     show :: Template -> String
     show (Template t _) = show t
+
+instance Show FilledTemplate where
+    show :: FilledTemplate -> String
+    show (FilledTemplate t) = show t
 
 -- | Equality of `ITemplates`. The contents of filled holes are included in the
 -- decision.
@@ -89,6 +95,10 @@ filled i c = flip Template ([],0,[i],1) $ (Compose "" (i, Just c) (Chunk ""))
 chunk :: DT.Text -- ^ Substring.
       -> Template
 chunk = flip Template ([],0,[],0) .  Chunk
+
+-- | The empty template corresponds to the empty string.
+empty :: Template
+empty = chunk ""
 
 -- | Composition of `ITemplates`.
 (>+>) :: ITemplate
@@ -136,6 +146,11 @@ numberOfUnfilledHoles (Template _ (_,m,_,_)) = m
 numberOfFilledHoles :: Template  -- ^ Template 
                     -> Natural
 numberOfFilledHoles (Template _ (_,_,_,n)) = n
+
+-- | Decide if a template is filled or not. 
+-- Time complexity: \(\mathcal{O}(1)\)
+isFilled :: Template -> Bool
+isFilled t = numberOfUnfilledHoles t == 0
 
 -- | Convert a template with no holes, a chunk, into a text.
 -- Time complexity: @O(0)@

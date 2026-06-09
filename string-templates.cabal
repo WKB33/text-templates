@@ -24,6 +24,7 @@ library
       Data.StringTemplate
       Data.StringTemplate.TemplateInternal
       Data.StringTemplate.QQInternal
+      Data.StringTemplate.JSON
   other-modules:
       Paths_string_templates
   autogen-modules:
