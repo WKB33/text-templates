@@ -11,76 +11,61 @@ respect to the [ECMA-404 The JSON Data Interchange
 Standard](https://www.json.org/json-en.html).
 -}
 module  Data.StringTemplate.JSON () where
-import Text.Read (Lexeme(String))
-import Text.Megaparsec (parseTest,runParserT,Parsec,ParsecT, between, MonadParsec (takeWhile1P, takeWhileP), sepBy, skipCount, many, (<|>), manyTill_, some, satisfy, choice, failure)
+import Text.Megaparsec (Parsec, between, sepBy, skipCount, many, some, satisfy, choice)
 import qualified Data.Text as DT
 import Data.Void (Void)
-import Control.Monad.State (State,lift, get, put, runState)
-import Text.Megaparsec.Char (char, asciiChar, printChar)
+import Text.Megaparsec.Char (char)
 
-import Data.StringTemplate.TemplateInternal 
+import Data.StringTemplate
 import Data.Char (isPrint)
+import Data.StringTemplate.Parser (templateParser)
 
-type ObjectFields = [(Template,JSONTemplate)]
-type ArrayFields  = [JSONTemplate]
+data FieldValue    = VT Template | VO JSONObject
+type Field         = (DT.Text,FieldValue)
+newtype JSONObject = JSONObject [Field]
 
-data JSONLiteral  = TrueLit | FalseLit | NullLit
-    deriving Show
+object :: JSONObject -> Template
+object (JSONObject fields) = chunk "{" +> fieldsTemplate +> chunk "}"
+    where
+        fieldsTemplate = foldl (\t f -> comma t +> field f) Empty fields
 
-data JSONTemplate = ObjectTemplate ObjectFields
-                  | ArrayTemplate ArrayFields
-                  | StringTemplate Template
-                  | NumberTemplate Template
-                  | Literal JSONLiteral
-    deriving Show
+        comma t@Empty = t
+        comma t@_     = t +> chunk ", "
 
-true :: JSONTemplate
-true = Literal TrueLit
+field :: Field -> Template
+field (DT.show -> label,VT value) = chunk (label <> ": ") +> value
+field (DT.show -> label,VO obj)   = chunk (label <> ": ") +> object obj
 
-false :: JSONTemplate
-false = Literal FalseLit
+type Parser = Parsec Void DT.Text
 
-null :: JSONTemplate
-null = Literal NullLit
+parseJSONObject :: Parser JSONObject
+parseJSONObject = do
+    f <- between (char '{') (char '}') parseFields
+    pure . JSONObject $ f
 
-object :: ObjectFields -> JSONTemplate
-object = ObjectTemplate
-
-array :: ArrayFields -> JSONTemplate
-array = ArrayTemplate
-
-string :: Template -> JSONTemplate
-string = StringTemplate
-
-number :: Template -> JSONTemplate
-number = NumberTemplate
-
--- Parsing: must parsed based on a witness.
-
--- Parser's state is a witness template. The witness guides the parsing.
-type ParserState = JSONTemplate
-type Parser = ParsecT Void DT.Text (State ParserState)
-
-parseJSONTemplate :: Parser JSONTemplate
-parseJSONTemplate = undefined
-
-parseObject :: Parser JSONTemplate
-parseObject = do
-    witness <- lift get
-    -- 1: check that the witness matches an object, if not fail
-    case witness of
-        -- 2: if so, then parse an object out of the stream into a list of fields.
-        ObjectTemplate witFields -> do            
-            parsedFields <- between (char '{') (char '}') $ parseFields 
-            undefined
-        _ -> fail ""
-
-parseFields :: Parser [(Template,JSONTemplate)]
+parseFields :: Parser [Field]
 parseFields = sepBy parseField (char ',')
 
+parseFieldLabel :: Parser DT.Text
+parseFieldLabel = parseQuoted parseChars
+
+parseFieldValue :: Parser FieldValue
+parseFieldValue = undefined
+
+-- Need to use the witness for the label and value
+parseField :: Parser Field
+parseField = do
+    l <- parseFieldLabel
+    parseColon
+    v <- parseFieldValue
+    pure $ (l,v)
+
+-- * Parser combinators
+parseStrTemplate :: Parser Template
+parseStrTemplate = templateParser
+
 parseQuoted :: Parser a -> Parser a
-parseQuoted p =  (between (some "'")  (some "'")  p) 
-             <|> (between (some "\"") (some "\"") p)
+parseQuoted p =  (between (some "'")  (some "'")  p)              
 
 parseColon :: Parser ()
 parseColon = skipCount 1 $ char ':'
@@ -98,34 +83,3 @@ parseChar = choice [
 
 parseChars :: Parser DT.Text
 parseChars = DT.pack <$> many parseChar 
-
-parseFieldLabel :: Template -> Parser DT.Text
-parseFieldLabel (Chunk label) = do 
-    s <- parseQuoted $ parseChars
-    if label == s
-    then  pure s
-    else fail ""
-parseFieldLabel (Compose c (i,Nothing) t) = undefined
-parseFieldLabel (Compose c (i,Just f) t)  = undefined
-parseFieldLabel witLabel = undefined
-
-scanTemplate :: Template -> Parser Template
-scanTemplate (Compose c (i,Nothing) t) = do
-    void $ string c
-    
-    undefined
-
-parseFieldValue :: JSONTemplate -> Parser JSONTemplate
-parseFieldValue witFieldValue = do
-    lift $ put witFieldValue
-    parseJSONTemplate
-
--- Need to use the witness for the label and value
-parseField :: (Template,JSONTemplate) -> Parser (Template,JSONTemplate)
-parseField (witLabel,witValue) = do
-    fieldLabel <- parseFieldLabel witLabel
-    parseColon
-    fieldValue <- parseFieldValue witValue
-    pure $ (undefined,undefined)
-
-
