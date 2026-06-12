@@ -17,8 +17,13 @@ on Template Haskell, then we strongly recommend to use the template combinators,
 because they keep track of internal state to make certain operations on
 templates efficient.
 -}
+{-# LANGUAGE PatternSynonyms #-}
 module Data.StringTemplate (-- * Templates 
                             Template
+                           ,pattern Empty
+                           ,pattern Chunk
+                           ,pattern Compose
+                           ,Hole
                             -- ** Template Combinators
                            ,hole
                            ,filled

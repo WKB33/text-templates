@@ -67,7 +67,7 @@ genTemplateNat _       0 = genChunk
 genTemplateNat holeGen n = do (Template t hprops) <- genTemplateNat holeGen $ n - 1
                               h <- holeGen
                               c <- arbitrary :: Gen DT.Text
-                              let t' = Compose c h t
+                              let t' = ICompose c h t
                               let hprops' = updateHoleProps h hprops
                               pure $ Template t' hprops'
 

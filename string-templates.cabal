@@ -23,8 +23,9 @@ library
   exposed-modules:
       Data.StringTemplate
       Data.StringTemplate.TemplateInternal
+      Data.StringTemplate.Parser
       Data.StringTemplate.QQInternal
-      Data.StringTemplate.JSON
+      Data.StringTemplate.JSON      
   other-modules:
       Paths_string_templates
   autogen-modules:
