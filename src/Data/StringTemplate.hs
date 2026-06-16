@@ -24,12 +24,18 @@ module Data.StringTemplate (-- * Templates
                            ,pattern Chunk
                            ,pattern Compose
                            ,Hole
+                           -- ** Typeclass 
+                           ,ToTemplate(..)
                             -- ** Template Combinators
                            ,hole
                            ,filled
                            ,chunk
                            ,(+>)
                            ,showAST
+                           ,sepTemplatesBy 
+                           ,betweenTemplate
+                           ,bracketTemplate
+                           ,braceTemplate
                            -- ** Template Properties
                            ,unfilledHoles
                            ,filledHoles
@@ -49,7 +55,14 @@ module Data.StringTemplate (-- * Templates
                            -- * Quasi-Quoter for Templates
                            ,template
                            ,stringTemplate2QExp
+                           -- * Text Combinators
+                           ,between
+                           ,braces
+                           ,brackets
+                           ,prettyList
+                           ,doubleQuote
                            ) where
 
+import Data.StringTemplate.Text
 import Data.StringTemplate.TemplateInternal
 import Data.StringTemplate.QQInternal

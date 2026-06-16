@@ -22,12 +22,13 @@ source-repository head
 library
   exposed-modules:
       Data.StringTemplate
-      Data.StringTemplate.TemplateInternal
+      Data.StringTemplate.Text
       Data.StringTemplate.Parser
-      Data.StringTemplate.QQInternal
       Data.StringTemplate.JSON      
   other-modules:
       Paths_string_templates
+      Data.StringTemplate.TemplateInternal
+      Data.StringTemplate.QQInternal
   autogen-modules:
       Paths_string_templates
   hs-source-dirs:
@@ -48,6 +49,7 @@ library
     InstanceSigs
     LambdaCase
     ViewPatterns
+    PatternSynonyms
     GADTs
   build-depends:
        base >=4.7 && <5

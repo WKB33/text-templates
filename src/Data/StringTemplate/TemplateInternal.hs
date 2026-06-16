@@ -51,6 +51,14 @@ data Template where
              -> ([Natural],Natural,[Natural],Natural) -- ^ Unfilled hole indices, number of unfilled holes, filled hole indices, and number of filled holes
              -> Template
 
+-- | Typeclass for converting types to Template.
+class ToTemplate a where
+    toTemplate :: a -> Template
+
+instance ToTemplate Template where
+    toTemplate :: Template -> Template
+    toTemplate = id
+
 -- | Pattern synonym for the empty template.
 pattern Empty :: Template
 pattern Empty <- (null -> True) where
@@ -319,3 +327,31 @@ match (Template t ([],0,_,_)) s =
     where
         m = filledToTextI t
 match _  _ = UnfilledTemplate
+
+-- * Combinators
+
+-- | Translates a list into a template list where each template in the input
+-- list is separated by the input template.
+sepTemplatesBy :: ToTemplate a 
+               => Template -- ^ Separator
+               -> [a]      -- ^ List of values to be converted into templates
+               -> Template
+sepTemplatesBy _ []  = chunk ""
+sepTemplatesBy _ [v] = toTemplate v
+sepTemplatesBy sep (v:vs) = toTemplate v +> sep +> sepTemplatesBy sep vs 
+
+-- | Add a prefix and suffix templates to the given value.
+betweenTemplate :: ToTemplate a 
+                => Template      -- ^ Prefix template
+                -> Template      -- ^ Suffice template
+                -> a             -- ^ Value to be converted into a template
+                -> Template
+betweenTemplate b a t = b +> toTemplate t +> a
+
+-- | Add brackets `[]` around the input template.
+bracketTemplate :: Template -> Template
+bracketTemplate = betweenTemplate (chunk "[") (chunk "]")
+
+-- | Add braces `{}` around the input template.
+braceTemplate :: Template -> Template
+braceTemplate = betweenTemplate (chunk "{") (chunk "}")

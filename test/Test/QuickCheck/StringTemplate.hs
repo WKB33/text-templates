@@ -20,7 +20,7 @@ import Test.QuickCheck.Instances.Text       ()
 import Test.QuickCheck.Instances.Natural    ()
 import Data.Text                            qualified as DT
 
-import Data.StringTemplate.TemplateInternal
+import Data.StringTemplate
 
 genChunk :: Gen Template
 genChunk = chunk <$> arbitrary
