@@ -22,11 +22,12 @@ source-repository head
 library
   exposed-modules:
       Data.StringTemplate
+      Data.StringTemplate.TemplateInternal
+      Data.StringTemplate.QQInternal
       Data.StringTemplate.Text
       Data.StringTemplate.Parser
       Data.StringTemplate.JSON
-      Data.StringTemplate.TemplateInternal
-      Data.StringTemplate.QQInternal
+      Data.StringTemplate.JSONInternal
   other-modules:
       Paths_string_templates      
   autogen-modules:
@@ -71,7 +72,7 @@ test-suite string-templates-test
       Data.StringTemplate.TemplateInternalSpec
       Data.StringTemplate.QQInternalSpec
       Test.QuickCheck.StringTemplate
-      Data.StringTemplate.JSONSpec
+      Data.StringTemplate.JSONInternalSpec
   autogen-modules:
       Paths_string_templates
   hs-source-dirs:
@@ -88,6 +89,7 @@ test-suite string-templates-test
      base >=4.7 && <5
     ,string-templates
     ,text
+    ,megaparsec
     ,type-natural
     ,template-haskell    
     ,hspec

@@ -360,6 +360,7 @@ braceTemplate = betweenTemplate (chunk "{") (chunk "}")
 -- | Template Union of types. Use this to add string templates to various
 -- locations within some structure data.
 data TU a = StrTU Template | LitTU a
+    deriving Eq
 
 -- | Parse a template union given a parser for templates and a parser for the
 -- type being combined with templates.
