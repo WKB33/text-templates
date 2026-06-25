@@ -38,9 +38,7 @@ module Data.StringTemplate (-- * Templates
                            ,unfilledHoles
                            ,filledHoles
                            ,numberOfUnfilledHoles
-                           ,numberOfFilledHoles
-                           -- ** Filling Hole in Templates
-                           ,fillHole                           
+                           ,numberOfFilledHoles                        
                            -- ** Plugging Holes in Templates
                            ,plugHole
                            ,plugAll
