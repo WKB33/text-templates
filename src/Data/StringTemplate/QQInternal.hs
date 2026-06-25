@@ -41,7 +41,7 @@ stringTemplate2QExp =  flip (.) (parseTemplate . DT.pack) $ \case {
     } 
 
 -- | Convert a `Hole` into a Template Haskell expression.
-hole2QExp :: Hole FillingExp -> Q Exp
+hole2QExp :: Hole -> Q Exp
 hole2QExp (i,Nothing)             = appCombinator1 (TH.mkName "hole")   (mkNaturalLit i)
 hole2QExp (i,Just (VarFilling v)) = appCombinator2 (TH.mkName "filled") (mkNaturalLit i) $ TH.varE . TH.mkName $ v
 hole2QExp (i,Just (LitFilling f)) = appCombinator2 (TH.mkName "filled") (mkNaturalLit i) $ TH.stringE . DT.unpack $ f

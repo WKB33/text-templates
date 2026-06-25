@@ -17,14 +17,13 @@ import Data.Text             qualified as DT
 
 import Data.StringTemplate.TemplateInternal
 import Test.QuickCheck.StringTemplate
+import Data.Functor.Identity (Identity)
 
-prop_associativeCompose :: Template () -> Template () -> Template () -> Property
+prop_associativeCompose :: Template Identity () -> Template Identity () -> Template Identity () -> Property
 prop_associativeCompose t1 t2 t3 = property $ t1 +> (t2 +> t3) == (t1 +> t2) +> t3
 
-prop_identityCompose :: Template () -> Property
+prop_identityCompose :: Template Identity () -> Property
 prop_identityCompose t = property $ (t +> empty) == t && (empty +> t) == t
-
--- Properties on HoleProps
 
 spec :: Spec 
 spec = do

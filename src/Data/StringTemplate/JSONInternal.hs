@@ -59,12 +59,12 @@ import Data.StringTemplate.TemplateInternal (TemplateExp, FillingExp, ToTemplate
 -- * JSON Syntax
 
 -- | Type of fields of a JSON object.
-type Field = (DT.Text,TU FillingExp Value)
+type Field = (DT.Text,TU Value)
 
 -- | JSON Value
 data Value 
     = ObjV   [Field]    -- ^ Object
-    | ArrayV [TU FillingExp Value] -- ^ Array
+    | ArrayV [TU Value] -- ^ Array
     | StrV   DT.Text    -- ^ String    
     | NumV   Double     -- ^ Number
     | BoolV  Bool       -- ^ Boolean
@@ -107,7 +107,7 @@ fieldLabel :: DT.Text -- ^ Label of the field
 fieldLabel = chunk . (<> ":") . StrT.doubleQuote
 
 -- | Create a template of an array value.
-array :: [TU FillingExp Value] -- ^ List of values of the array
+array :: [TU Value] -- ^ List of values of the array
       -> TemplateExp
 array = StrT.bracketTemplate . StrT.sepTemplatesBy (chunk ",")
 
@@ -274,7 +274,7 @@ nullVParser =  nullTok
             *> pure NullV
 
 -- | Parse a `Value` or `Template`.
-valueTUParser :: Parser (TU FillingExp Value)
+valueTUParser :: Parser (TU Value)
 valueTUParser = StrT.parseTU templateParser valueParser
 
 -- | Parse an array value of a field of an object.
