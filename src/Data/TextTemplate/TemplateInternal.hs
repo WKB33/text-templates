@@ -85,16 +85,7 @@ decomposeUndefHole h | isNothing (decomposeEmptyHole h) && isNothing (decomposeF
 isFreshHoleIndex :: Int         -- ^ Hole index
                  -> HoleProps f -- ^ Hole properties
                  -> Bool
-isFreshHoleIndex h (hls,fhls) = not $ h `elem` hls || h `elem` (M.keys fhls)
-
--- | Adds a hole index and potential filling to the given hole properties. If
--- the given filling is @Nothing@ then the hole is assumed to be added as an
--- unfilled hole, otherwise it's added as a filled hole. The given index cannot
--- already exist in the hole properties.
-updateFreshHolePropsWith :: HoleProps Text -> (Int,Maybe Text) -> HoleProps Text
-updateFreshHolePropsWith holeProps@(hls, fhls) (h, Nothing)  | h `isFreshHoleIndex` holeProps = (h:hls,fhls)
-updateFreshHolePropsWith holeProps@(hls, fhls) (h, (Just f)) | h `isFreshHoleIndex` holeProps = (hls,M.insert h f fhls)
-updateFreshHolePropsWith holeProps             (_,_)                                          = holeProps
+isFreshHoleIndex h holeProps = not $ filledHole h holeProps || emptyHole h holeProps
 
 emptyHole :: Int -> HoleProps f -> Bool
 emptyHole i (hls,fhls) = i `elem` hls && not (i `elem` M.keys fhls)
@@ -104,6 +95,15 @@ filledHole i (hls,fhls) = not (i `elem` hls) && i `elem` M.keys fhls
 
 emptyHoleProps :: HoleProps f
 emptyHoleProps = ([], M.empty)
+
+-- | Adds a hole index and potential filling to the given hole properties. If
+-- the given filling is @Nothing@ then the hole is assumed to be added as an
+-- unfilled hole, otherwise it's added as a filled hole. The given index cannot
+-- already exist in the hole properties.
+updateFreshHolePropsWith :: HoleProps Text -> (Int,Maybe Text) -> HoleProps Text
+updateFreshHolePropsWith holeProps@(hls, fhls) (h, Nothing)  | h `isFreshHoleIndex` holeProps = (h:hls,fhls)
+updateFreshHolePropsWith holeProps@(hls, fhls) (h, (Just f)) | h `isFreshHoleIndex` holeProps = (hls,M.insert h f fhls)
+updateFreshHolePropsWith holeProps             (_,_)                                          = holeProps
 
 -- | Internal templates are the underlying structure of `Template`.
 data ITemplate where
