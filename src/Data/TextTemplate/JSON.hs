@@ -7,6 +7,6 @@ Maintainer  : harley.eades@gmail.com
 
 JSON Templates
 -}
-module  Data.StringTemplate.JSON (jsonTemplate) where
+module  Data.TextTemplate.JSON (jsonTemplate) where
 
-import Data.StringTemplate.JSONInternal
+import Data.TextTemplate.JSONInternal

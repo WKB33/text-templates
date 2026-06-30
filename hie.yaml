@@ -1,7 +1,7 @@
 cradle:
   stack:
     - path: "./src"
-      component: "string-templates:lib"
+      component: "text-templates:lib"
 
     - path: "./test"
-      component: "string-templates:test:string-templates-test"
+      component: "text-templates:test:text-templates-test"

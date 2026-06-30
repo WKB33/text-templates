@@ -8,7 +8,7 @@ Maintainer  : harley.eades@gmail.com
 -}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE QuasiQuotes #-}
-module  Data.StringTemplate.JSONInternalSpec (spec) where
+module  Data.TextTemplate.JSONInternalSpec (spec) where
 
 import Test.Hspec
 import Test.Hspec.QuickCheck (prop)
@@ -20,8 +20,8 @@ import Data.Text qualified as DT
 import Data.Char (isSpace, isControl, isPrint)
 import Data.Maybe (isJust)
 
-import Data.StringTemplate.JSONInternal
-import Data.StringTemplate.TemplateInternal (Template, (+>), chunk, hole, TU (LitTU, StrTU), filled)
+import Data.TextTemplate.JSONInternal
+import Data.TextTemplate.TemplateInternal (Template, (+>), chunk, hole, TU (LitTU, StrTU), filled)
 
 spec :: Spec
 spec = do    

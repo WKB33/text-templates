@@ -1,12 +1,12 @@
 {-|
 Module      : Template
-Description : Framework for creating string templates
+Description : Framework for creating text templates
 Copyright   : (c) Harley Eades, 2026
               (c) WKB3, 2026
 Maintainer  : harley.eades@wkb3.com
 
-Framework for creating string templates. These are strings with holes that can
-be filled and plugged. No parsing of the actual string is done, but the string
+Framework for creating text templates. These are text with holes that can
+be filled and plugged. No parsing of the actual text is done, but the text
 is broken up into `chunk`'s in between the `hole`'s. Then a fill or plug
 function can be defined to replace the holes with text; see `fillHole` and
 `plugHole`. 
@@ -18,7 +18,7 @@ because they keep track of internal state to make certain operations on
 templates efficient.
 -}
 {-# LANGUAGE PatternSynonyms #-}
-module Data.StringTemplate (-- * Templates 
+module Data.TextTemplate (-- * Templates 
                             Template
                            ,pattern Empty
                            ,pattern Chunk
@@ -48,7 +48,7 @@ module Data.StringTemplate (-- * Templates
                            ,chunkToText
                            -- * Quasi-Quoter for Templates
                            ,template
-                           ,stringTemplate2QExp
+                           ,textTemplate2QExp
                            ,template2QExp
                            -- * Text Combinators
                            ,between
@@ -62,6 +62,6 @@ module Data.StringTemplate (-- * Templates
                            ,parseTU
                            ) where
 
-import Data.StringTemplate.Text
-import Data.StringTemplate.TemplateInternal
-import Data.StringTemplate.QQInternal
+import Data.TextTemplate.Text
+import Data.TextTemplate.TemplateInternal
+import Data.TextTemplate.QQInternal

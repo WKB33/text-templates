@@ -6,7 +6,7 @@ Copyright   : (c) Harley Eades, 2026
 Maintainer  : harley.eades@gmail.com
 
 -}
-module Data.StringTemplate.Text 
+module Data.TextTemplate.Text 
     (between
     ,braces
     ,brackets

@@ -9,7 +9,7 @@ Includes parsers for templates as well as a quasi-quoter
 for generating templates at compile time.
 -}
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
-module Data.StringTemplate.QQInternal where
+module Data.TextTemplate.QQInternal where
 
 import Language.Haskell.TH        (Q
                                   ,Exp
@@ -18,23 +18,23 @@ import Language.Haskell.TH.Quote  (QuasiQuoter (..))
 import Language.Haskell.TH        qualified as TH
 import Data.Text                  qualified as DT
 
-import Data.StringTemplate.TemplateInternal
+import Data.TextTemplate.TemplateInternal
 
 -- * Quasi-Quoter for Templates 
 
 -- | The quasi-quoter.
 template :: QuasiQuoter
 template = QuasiQuoter {
-    quoteExp  = stringTemplate2QExp
+    quoteExp  = textTemplate2QExp
    ,quotePat  = undefined
    ,quoteDec  = undefined
    ,quoteType = undefined
 }
 
 -- | Parses a template string into a Template Haskell expression.
-stringTemplate2QExp :: String -- ^ String to parse as a template
+textTemplate2QExp :: String -- ^ String to parse as a template
                     -> TH.Q TH.Exp
-stringTemplate2QExp =  flip (.) (parseTemplate . DT.pack) $ \case {
+textTemplate2QExp =  flip (.) (parseTemplate . DT.pack) $ \case {
          Right t  -> template2QExp t
         ;Left err -> fail $ DT.unpack err
     } 

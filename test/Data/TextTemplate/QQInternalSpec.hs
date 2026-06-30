@@ -1,9 +1,9 @@
 {-# LANGUAGE QuasiQuotes #-}
-module Data.StringTemplate.QQInternalSpec (spec) where
+module Data.TextTemplate.QQInternalSpec (spec) where
 
 import Test.Hspec
-import Data.StringTemplate.TemplateInternal
-import Data.StringTemplate.QQInternal
+import Data.TextTemplate.TemplateInternal
+import Data.TextTemplate.QQInternal
 
 import Data.IntMap qualified as M
 

@@ -1,13 +1,13 @@
 {-|
 Module      : Template
-Description : Framework for creating string templates
+Description : Framework for creating text templates
 Copyright   : (c) Harley Eades, 2026
               (c) WKB3, 2026
 Maintainer  : harley.eades@wkb3.com
 
-Framework for creating string templates. These are strings with holes that 
-can be filled and plugged. No parsing of the actual string is done, but the 
-string is broken up into `chunk`'s in between the `hole`'s.
+Framework for creating text templates. These are text with holes that 
+can be filled and plugged. No parsing of the actual text is done, but the 
+text is broken up into `chunk`'s in between the `hole`'s.
 -}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE DataKinds                    #-}
@@ -24,7 +24,7 @@ string is broken up into `chunk`'s in between the `hole`'s.
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
-module Data.StringTemplate.TemplateInternal where
+module Data.TextTemplate.TemplateInternal where
 
 import Data.Text (Text)
 import Data.Text qualified as DT
@@ -374,11 +374,11 @@ plugAll _ _ = Nothing
 
 -- * Template Expressions
 
--- | A intermediate expression language for template strings where expressions
+-- | A intermediate expression language for text templates where expressions
 -- (`FillingExp`) fill their holes.
 type TemplateExp = Template FillingExp
 
--- | Template Union of types. Use this to add string templates to various
+-- | Template Union of types. Use this to add templates to various
 -- locations within some structure data.
 data TU a = StrTU (Template FillingExp) | LitTU a
     deriving Eq
@@ -465,23 +465,23 @@ instance (Show a) => Show (TU a) where
 -- | Parse a template.
 parseTemplate :: Text -> Either Text TemplateExp
 parseTemplate s 
-    = case parse templateParser "string-templates" s of
+    = case parse templateParser "text-templates" s of
         Left bundle -> Left . DT.pack $ errorBundlePretty bundle
         Right t -> Right t
 
 parseVarFilling :: Text -> Either Text String
 parseVarFilling s 
-    = case parse varFillingParser "string-templates" s of
+    = case parse varFillingParser "text-templates" s of
         Left bundle -> Left . DT.pack $ errorBundlePretty bundle
         Right (VarFilling t) -> Right t
-        _ -> error "StringTemplates.Parser: impossible branch reached in parseVarFilling."
+        _ -> error "TextTemplates.Parser: impossible branch reached in parseVarFilling."
 
 parseLitFilling :: Text -> Either Text Text
 parseLitFilling s 
-    = case parse litFillingParser "string-templates" s of
+    = case parse litFillingParser "text-templates" s of
         Left bundle -> Left . DT.pack $ errorBundlePretty bundle
         Right (LitFilling t) -> Right t
-        _ -> error "StringTemplates.Parser: impossible branch reached in parseVarFilling."
+        _ -> error "TextTemplates.Parser: impossible branch reached in parseVarFilling."
 
 -- | Convenient function for testing the parser in GHCi.
 templateParserTest :: Text -> IO ()
@@ -494,7 +494,7 @@ data ITParseError
 
 instance ShowErrorComponent ITParseError where
     showErrorComponent :: ITParseError -> String
-    showErrorComponent err = "string-templates: " <> showErrorComponent' err
+    showErrorComponent err = "text-templates: " <> showErrorComponent' err
         where
             showErrorComponent' ITPEVarFillingExpBeginLower = "filling variables must being with a lower-case letter"
 

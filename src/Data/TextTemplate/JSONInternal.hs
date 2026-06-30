@@ -1,11 +1,11 @@
 {-|
 Module      : JSON Templates
-Description : String templates for JSON
+Description : Text templates for JSON
 Copyright   : (c) Harley Eades, 2026
               (c) WKB3, 2026
 Maintainer  : harley.eades@gmail.com
 
-String templates for JSON. The main use of this library is to test JSON
+Text templates for JSON. The main use of this library is to test JSON
 encoders/decoders, but there could be more use cases. This API is designed with
 respect to [RFC 8259: STD 90: The JavaScript Object Notation (JSON) Data
 Interchange Format](https://www.rfc-editor.org/info/rfc8259/).
@@ -17,7 +17,7 @@ Interchange Format](https://www.rfc-editor.org/info/rfc8259/).
 {-# LANGUAGE FlexibleInstances #-}
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
 {-# OPTIONS_GHC -Wno-unused-imports #-}
-module  Data.StringTemplate.JSONInternal where
+module  Data.TextTemplate.JSONInternal where
 
 import Text.Megaparsec            (Parsec
                                   ,ParseErrorBundle
@@ -43,18 +43,18 @@ import Text.Megaparsec.Char.Lexer (float
 import Language.Haskell.TH        qualified as TH
 import Language.Haskell.TH.Quote  (QuasiQuoter(..))
 import Language.Haskell.TH.Quote  qualified as TH
-import Data.StringTemplate        ((+>)
+import Data.TextTemplate        ((+>)
                                   ,chunk
                                   ,Template
                                   ,TU(..)) 
-import Data.StringTemplate.TemplateInternal qualified as StrT
-import Data.StringTemplate.Text             qualified as StrT
-import Data.StringTemplate.QQInternal       qualified as StrT
+import Data.TextTemplate.TemplateInternal qualified as StrT
+import Data.TextTemplate.Text             qualified as StrT
+import Data.TextTemplate.QQInternal       qualified as StrT
 import Numeric (readHex)
 import Text.Megaparsec.Error (ShowErrorComponent(..), ErrorItem (..))
 import Data.List.NonEmpty (fromList)
 import Control.Monad.State (State, evalState, MonadTrans (..), MonadState (..))
-import Data.StringTemplate.TemplateInternal (TemplateExp, FillingExp, ToTemplateExp (..))
+import Data.TextTemplate.TemplateInternal (TemplateExp, FillingExp, ToTemplateExp (..))
 
 -- * JSON Syntax
 

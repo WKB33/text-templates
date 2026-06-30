@@ -1,4 +1,4 @@
-# Changelog for `string-templates`
+# Changelog for `text-templates`
 
 All notable changes to this project will be documented in this file.
 
