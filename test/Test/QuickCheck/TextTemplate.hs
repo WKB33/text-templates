@@ -2,7 +2,7 @@
 Module      : TextTemplate
 Description : Generation of random text templates
 Copyright   : (c) Harley Eades, 2026
-              ) WKB3, 2026
+              (c) WKB, 2026
 Maintainer  : harley.eades@gmail.com
 
 Includes a generator for QuickCheck to randomly generate text templates to be
@@ -32,7 +32,8 @@ genTemplateNat n = do (Template t (hls,fhls)) <- genTemplateNat $ n - 1
                       h <- arbitrary :: Gen Int
                       c <- arbitrary :: Gen DT.Text
                       let t' = ICompose c h t
-                      pure $ Template t' (h:hls,fhls)
+                      let hls' = if h `elem` hls then hls else h:hls
+                      pure $ Template t' (hls',fhls)
 
 genTemplate :: Gen (Template ())
 genTemplate = arbitrary >>= genTemplateNat 
